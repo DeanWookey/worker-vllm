@@ -263,6 +263,7 @@ def _resolve_max_model_len(model, trust_remote_code=False, revision=None):
             model,
             trust_remote_code=trust_remote_code,
             revision=revision,
+            token=os.getenv("HF_TOKEN"),
         )
         for attr in ('max_position_embeddings', 'n_positions', 'max_seq_len', 'seq_length'):
             val = getattr(config, attr, None)
