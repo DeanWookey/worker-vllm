@@ -62,10 +62,3 @@ RUN --mount=type=secret,id=HF_TOKEN,required=false \
 
 # Start the handler
 CMD ["python3", "/src/handler.py"]
-
-# Apply fix for hf_token not being forwarded during config loading
-# https://github.com/vllm-project/vllm/pull/37920 (merged after v0.18.1)
-RUN apt-get install -y patch && \
-    VLLM_LOC=$(pip show vllm | grep Location | awk '{print $2}') && \
-    curl -L https://github.com/vllm-project/vllm/pull/37920.diff | \
-    patch -p1 -d "$VLLM_LOC"

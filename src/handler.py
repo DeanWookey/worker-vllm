@@ -1,15 +1,8 @@
 import sys
-import os
 import multiprocessing
 import traceback
 import runpod
 from runpod import RunPodLogger
-
-# Authenticate with HuggingFace at startup so all libraries pick up the token
-_hf_token = os.getenv("HF_TOKEN")
-if _hf_token:
-    import huggingface_hub
-    huggingface_hub.login(token=_hf_token, add_to_git_credential=False)
 
 log = RunPodLogger()
 

@@ -57,8 +57,7 @@ class vLLMEngine:
                 tokenizer = AutoTokenizer.from_pretrained(
                     self.engine_args.tokenizer or self.engine_args.model,
                     revision=self.engine_args.tokenizer_revision or "main",
-                    trust_remote_code=self.engine_args.trust_remote_code,
-                    token=os.getenv("HF_TOKEN")
+                    trust_remote_code=self.engine_args.trust_remote_code
                 )
                 # Create a minimal wrapper
                 class MinimalTokenizerWrapper:
