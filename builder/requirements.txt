@@ -12,3 +12,8 @@ transformers >= 4.57.0
 bitsandbytes>=0.45.0
 kernels
 torch-c-dlpack-ext
+
+# Pin torch to match vllm 0.18.0 requirement - prevents --upgrade from breaking compilation
+torch==2.10.0
+torchvision==0.25.0
+torchaudio==2.10.0
