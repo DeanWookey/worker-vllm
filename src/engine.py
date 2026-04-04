@@ -10,6 +10,7 @@ from vllm import AsyncLLMEngine
 from vllm.entrypoints.logger import RequestLogger
 from vllm.entrypoints.openai.chat_completion.protocol import ChatCompletionRequest
 from vllm.entrypoints.openai.chat_completion.serving import OpenAIServingChat
+from vllm.entrypoints.serve.render.serving import OpenAIServingRender
 from vllm.entrypoints.openai.completion.protocol import CompletionRequest
 from vllm.entrypoints.openai.completion.serving import OpenAIServingCompletion
 from vllm.entrypoints.openai.engine.protocol import ErrorResponse
@@ -248,10 +249,24 @@ class OpenAIvLLMEngine(vLLMEngine):
         if self.tokenizer and hasattr(self.tokenizer, 'tokenizer'):
             chat_template = self.tokenizer.tokenizer.chat_template
         
+        serving_render = OpenAIServingRender(
+            model_config=self.llm.model_config,
+            renderer=self.llm.renderer,
+            io_processor=self.llm.io_processor,
+            model_registry=self.serving_models.registry,
+            request_logger=None,
+            chat_template=chat_template,
+            chat_template_content_format="auto",
+            trust_request_chat_template=os.getenv('TRUST_REQUEST_CHAT_TEMPLATE', 'false').lower() == 'true',
+            enable_auto_tools=os.getenv('ENABLE_AUTO_TOOL_CHOICE', 'false').lower() == 'true',
+            exclude_tools_when_tool_choice_none=os.getenv('EXCLUDE_TOOLS_WHEN_TOOL_CHOICE_NONE', 'false').lower() == 'true',
+            tool_parser=os.getenv('TOOL_CALL_PARSER', "") or None,
+        )
         self.chat_engine = OpenAIServingChat(
-            engine_client=self.llm, 
+            engine_client=self.llm,
             models=self.serving_models,
             response_role=self.response_role,
+            openai_serving_render=serving_render,
             request_logger=None,
             chat_template=chat_template,
             chat_template_content_format="auto",
@@ -268,6 +283,7 @@ class OpenAIvLLMEngine(vLLMEngine):
         self.completion_engine = OpenAIServingCompletion(
             engine_client=self.llm,
             models=self.serving_models,
+            openai_serving_render=serving_render,
             request_logger=None,
             return_tokens_as_token_ids=os.getenv('RETURN_TOKENS_AS_TOKEN_IDS', 'false').lower() == 'true',
             enable_prompt_tokens_details=os.getenv('ENABLE_PROMPT_TOKENS_DETAILS', 'false').lower() == 'true',
