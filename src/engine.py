@@ -290,8 +290,6 @@ class OpenAIvLLMEngine(vLLMEngine):
             enable_force_include_usage=os.getenv('ENABLE_FORCE_INCLUDE_USAGE', 'false').lower() == 'true',
         )
 
-        if hasattr(self.chat_engine, 'warmup'):
-            await self.chat_engine.warmup()
 
     async def generate(self, openai_request: JobInput):
         # Ensure engines are ready (no-op if already initialized at startup)
